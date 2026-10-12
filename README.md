@@ -1,6 +1,8 @@
-# Agent Skills
+# Job Searching Skills
 
-A collection of agent skills for the job search — improving and polishing resumes, filling out job applications, and planning the search itself.
+A collection of agent skills for the job search — improving and polishing resumes, filling out job applications, and planning the search itself. 
+
+> Job hunting shouldn't be a burden to any of us.
 
 ## Skills
 
@@ -42,7 +44,7 @@ The skill runs through seven phases — extract facts, scope the assignment, edi
 
 For job applications:
 
-> "Help me fill out this job application: <job posting URL>. Use my resume from this repo."
+> "Help me fill out this job application: <job posting URL></job>. Use my resume from this repo."
 
 It inspects the form, finds and prepares your resume (rendering or converting it if the platform needs a different format), fills the fields, and iterates on validation errors — sensitive fields (ID number, family details, photo, signature) and the final submit stay with you.
 
