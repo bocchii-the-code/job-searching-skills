@@ -4,10 +4,11 @@
   "groupings": [
     {
       "title": "job-searching-skills",
-      "description": "Skills for the job search: resume refinement and job-application form filling.",
+      "description": "Skills for the job search: resume refinement, job-application form filling, and search planning.",
       "skills": [
         "resume-refiner",
-        "fill-job-app"
+        "fill-job-app",
+        "career-consulting"
       ]
     }
   ]
