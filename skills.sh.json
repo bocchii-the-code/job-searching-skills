@@ -3,10 +3,11 @@
   "notGrouped": "bottom",
   "groupings": [
     {
-      "title": "Resume",
-      "description": "Skills for improving, polishing, and reviewing resumes and CVs.",
+      "title": "job-searching-skills",
+      "description": "Skills for the job search: resume refinement and job-application form filling.",
       "skills": [
-        "resume-refiner"
+        "resume-refiner",
+        "fill-job-app"
       ]
     }
   ]
