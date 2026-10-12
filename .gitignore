@@ -1,0 +1,5 @@
+# Local skill installs via the skills CLI (not part of the repo content)
+.agents/
+.claude/
+agent/
+skills-lock.json
