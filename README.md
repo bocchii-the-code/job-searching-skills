@@ -18,6 +18,18 @@ Fill out job application forms end-to-end: inspect the form, create the online p
 
 Acts as a job-search consultant: it looks over your job hunting documents and says what needs doing right now — deadlines coming up, listings that haven't been checked recently, links that stopped opening — researches new companies and markets, helps weigh internships against full-time roles, and keeps your running documents up to date. Ships with four guides: research and document rules, a decision framework, a visa quick guide by country, and a link-verification guide that explains step by step how to confirm a job posting is still open. Self-contained — no plugins required: any agent can run it, browser help is optional, and every check reports how confident its result really is.
 
+## Workflow
+
+The three skills run in one order: polish the CV, plan the search, then fill in applications. Each one also runs on its own.
+
+resume-refiner → career-consulting → fill-job-app
+
+1. Polish the CV with [resume-refiner](skills/resume-refiner/SKILL.md). It rewrites the resume from your source material, then reports layout and length gaps as decisions you make. The finished CV becomes the data source for step 3.
+
+2. Plan the search with [career-consulting](skills/career-consulting/SKILL.md). On the first run, it builds your Profile.md through an interview. It scans your job-hunting documents for deadlines and stale listings, researches new companies, and returns a next-action list. It advises on CV keywords only, and resume edits go back to resume-refiner.
+
+3. Apply with [fill-job-app](skills/fill-job-app/SKILL.md). Give it a job posting URL and the CV from step 1. It reads the CV data before it touches the form, fills the fields, and iterates on validation errors. Sensitive fields and the final submit stay with you.
+
 ## Install
 
 ```bash
@@ -42,17 +54,17 @@ Ask your agent to improve your resume, e.g.:
 
 The skill runs through seven phases — extract facts, scope the assignment, edit, polish, report, surface any layout/typography gaps as decisions, and run a final pre-delivery audit — with an unbreakable rule: **never fabricate.** Everything in the output traces back to facts in the source material.
 
-For job applications:
-
-> "Help me fill out this job application: <job posting URL></job>. Use my resume from this repo."
-
-It inspects the form, finds and prepares your resume (rendering or converting it if the platform needs a different format), fills the fields, and iterates on validation errors — sensitive fields (ID number, family details, photo, signature) and the final submit stay with you.
-
 For the search itself:
 
 > "Go over my job hunting documents: what's closing soon, what needs re-checking, and what should I apply to next?"
 
 It scans your documents for upcoming deadlines and stale listings, re-checks links that may have stopped working, and updates the documents with what it found — so the next action is always obvious.
+
+For job applications:
+
+> "Help me fill out this job application: <job posting URL></job>. Use my resume from this repo."
+
+It inspects the form, finds and prepares your resume (rendering or converting it if the platform needs a different format), fills the fields, and iterates on validation errors — sensitive fields (ID number, family details, photo, signature) and the final submit stay with you.
 
 ## Development
 
