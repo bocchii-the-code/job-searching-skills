@@ -10,7 +10,7 @@ Improve an existing resume — rewording, restructuring, and visual polish — w
 
 ### [fill-job-app](skills/fill-job-app/SKILL.md)
 
-Fill out job application forms end-to-end: inspect the form, create the online profile (uploading and parsing your resume where the platform supports it), batch-fill fields, iterate on validation errors, and leave sensitive fields and the final submission to you. The resume data source can be any format — YAML, PDF, Markdown, or DOCX. Ships with tested helper scripts for Beisen eRecruit portals (hotjob.cn / zhiye.com) plus a general playbook for other platforms such as Workday and custom career sites.
+Fill out job application forms end-to-end: inspect the form, create the online profile (uploading and parsing your resume where the platform supports it), batch-fill fields, iterate on validation errors, and leave sensitive fields and the final submission to you. The resume data source can be any format — YAML, PDF, Markdown, or DOCX. Ships with tested helper scripts for Beisen eRecruit portals (hotjob.cn / zhiye.com) plus a general playbook for other platforms such as Workday and custom career sites. It is self-contained — no specific plugins required: any agent that can drive a browser can run it, and it degrades to step-by-step guidance when no browser tool is available.
 
 ## Install
 

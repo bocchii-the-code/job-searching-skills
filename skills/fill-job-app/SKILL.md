@@ -2,7 +2,8 @@
 name: fill-job-app
 description: >-
   求职申请表单的通用填写与投递流程（任意公司的在线申请/网申系统）：申请勘察、
-  在线档案创建、表单批量补填、保存校验迭代、提交前确认；简历数据来源支持各种格式（YAML / PDF / Markdown / DOCX 等）。
+  在线档案创建、表单批量补填、保存校验迭代、提交前确认；简历数据来源支持各种格式
+  （YAML / PDF / Markdown / DOCX 等）；自包含，不依赖特定插件。
   Use when the user asks to "帮我填写申请" / 网申 / 投递 / fill a job application,
   or needs to complete an application form for any company — including platforms
   like 北森 eRecruit（hotjob.cn / zhiye.com，华泰/易方达/南方基金/中金等）、Workday、
@@ -12,32 +13,39 @@ description: >-
 
 # 求职申请填写（fill-job-app）
 
-通用流程 + 平台手册。数据始终来自用户的简历仓库；敏感信息尊重用户边界。
+通用流程 + 平台手册。数据来自用户提供的简历文件；敏感信息尊重用户边界。
+
+**能力自检（无插件也能运行）：**
+- 浏览器自动化（打开/点击/输入页面）：没有 → 逐步引导用户手动操作
+- 页面内执行 JS（注入辅助脚本用）：没有 → 用工具原生表单操作代替辅助脚本
+- 文件读写：没有 → 以对话方式收集和输出内容
+- 文档转换（可选）：没有 → 让用户提供平台要求格式的文件
 
 ## 数据来源与前置
 
-- 简历数据源：用户简历仓库里的 CV 文件，格式不限（rendercv YAML、PDF、Markdown、
-  DOCX 等）。开工前先列出候选文件并确认用哪份（多份时以最新、与岗位最匹配的为准）；
-  PDF/Office 文档可用文档转换类技能（pdf / convert-documents-to-markdown / docx）
-  读取出内容
-- 平台要求上传 PDF 时：有 rendercv YAML 就渲染最新版（Windows 设
-  `PYTHONIOENCODING=utf-8`，输出到临时目录，避免覆盖仓库产物）；已有现成 PDF 直接
-  用；其他格式先用文档转换技能转换
+- 简历数据源：用户的简历文件，格式不限（YAML、PDF、Markdown、DOCX 等；可能在
+  简历仓库、上传目录，或由用户直接提供）。开工前先列出候选文件并确认用哪份
+  （多份时以最新、与岗位最匹配的为准）；PDF/Office 文档先用可用的工具读取内容
+  （PDF 文本提取、pandoc、LibreOffice 等通用方式均可）
+- 平台要求上传 PDF 时：有 rendercv YAML 就渲染最新版（如控制台报编码错误——常见于
+  Windows——先设 `PYTHONIOENCODING=utf-8`；输出到临时目录，避免覆盖仓库产物；未装
+  rendercv 时跳过此步，直接用现有 PDF）；已有现成 PDF 直接用；其他格式先转换
 - **先读 CV 数据再动表单**，避免中途来回找数据
 - **不猜**：证件号、出生日期、家庭关系、照片等只从用户处获取（或用户自填）
 
 ## 通用流程（平台无关）
 
 1. **勘察**：打开申请页，梳理字段清单、必填项、账号/认证要求、附件入口
-2. **登录**：首选让用户本人完成（短信/扫码/SSO）——`select_page(bringToFront)`
-   后交给用户，等用户确认；不代持账号密码
+2. **登录**：首选让用户本人完成（短信/扫码/SSO）——把浏览器窗口切到用户面前后
+   交给用户，等用户确认；不代持账号密码
 3. **建档**：若平台要求先建「在线简历/账号档案」：优先找「上传简历解析」入口，
    用最新 PDF 预填，再逐块审计修正（自动解析必有错位：实测出现过项目名混入
    「•」符号、实习被放进「工作经历」、条目内容错位）
 4. **补填**：用页面内辅助脚本填（见「辅助脚本」）；先小步验证再批量操作
-5. **文字字段用真实键盘**：`evaluate(el.focus())` → `press_key("Control+A")` →
-   `type_text(值)`。脚本合成设值在 Vue/React 受控组件上常不触发校验模型，
-   保存时会报「请填写」——本技能最重要的一条 ★
+5. **文字字段用真实键盘**：聚焦元素 → 真实键盘全选（Ctrl+A）→ 真实键盘输入新值。
+   真实按键是通用能力，任何能发出真实按键的浏览器工具都可以；只用页面脚本改
+   input.value（合成 DOM 事件）在 Vue/React 受控组件上不触发校验，保存时会报
+   「请填写」——本技能最重要的一条 ★
 6. **保存/校验迭代**：保存后读错误提示逐项修复；校验常按区块短路，需多轮迭代
 7. **敏感项留给用户**：证件号码、家庭信息、照片、签名；用户明确委托才代填
 8. **提交/投递前与用户确认**（对用户有外部影响的动作）
@@ -45,10 +53,11 @@ description: >-
 
 ## 通用技术要点
 
-- 招聘页多为 SPA：普通 HTTP 抓取只能拿到空壳，用 chrome-devtools MCP 真实浏览器
-- 关键按钮（登录、开新窗口/新标签）用 MCP 真实点击（uid）；页面脚本的合成
+- 招聘页多为 SPA：普通 HTTP 抓取只能拿到空壳——需要能执行 JavaScript 的真实
+  浏览器自动化能力
+- 关键按钮（登录、开新窗口/新标签）要用工具的真实点击能力；页面脚本的合成
   `click()` 可能被忽略。下拉/单选/日期用合成 mousedown/click 通常有效
-- 大量读取：`take_snapshot` 落盘到**项目目录内**再解析（ctx 沙箱只能读项目内
+- 大量读取：先把页面快照落盘成文件再解析（受限环境通常只能读取工作目录内的
   文件），不要把原始表单灌进上下文
 - 日期控件是 readonly 输入框时：点开面板，往面板的输入框输值 + Enter
 - 新条目/动态区块会导致控件索引偏移：按「条目容器」作用域定位，不要用全局索引
@@ -64,7 +73,7 @@ description: >-
 
 - 职位页 `posDetail.html`；登录点「登录/注册」→ 微信扫码（交给用户）
 - 「立即投递」无简历时跳 `account.html#/resumeManage` → 「新建简历」开新标签
-  `resumeOperation.html`（用 `list_pages` 找新页）
+  `resumeOperation.html`（用浏览器工具的页面列表功能找到新开页）
 - 表单是 Ant Design Vue v1；用 `scripts/antd-vue-helpers.js`（元素作用域版本）
 - 字段速查：下拉 `.ant-select`（显示值 `.ant-select-selection`，选项
   `.ant-select-dropdown-menu-item`）；可搜索下拉向搜索 input 输关键词后选择；
@@ -86,14 +95,15 @@ Workday（HKEX 等）、官网自建（HSBC / 微软 / Jane Street）、飞书�
 
 - 默认留给用户本人操作：证件号码、家庭关系、证件照、签名；用户明确委托才代填
 - 提交/投递等最终动作先与用户确认
-- 本技能与脚本不包含任何个人数据；CV 数据从用户的简历仓库读取
+- 本技能与脚本不包含任何个人数据；简历数据从用户提供的文件读取
 
 ## 辅助脚本
 
-- `scripts/antd-vue-helpers.js`：Ant Design Vue 页面辅助函数（北森用）。全文作为
-  `evaluate_script` 的 function 参数注入；页面导航后需重新注入。函数清单：
-  `_pickEl / _readOptionsEl / _openEl`（元素作用域，推荐）、
-  `_pick / _readOptions / _open / _sel`（全局索引版，条目增删后会偏移，慎用）、
-  `_searchPick`（可搜索下拉）、`_setVal / _fill`（应急设值，需真实键盘复核）、
-  `_setDateEl / _clearDateEl`、`_radio`、`_cells`（按文本定位条目容器）
+- `scripts/antd-vue-helpers.js`：Ant Design Vue 页面辅助函数（北森用）。注入方式：
+  把全文作为浏览器工具「在页面中执行 JS」入口的代码传入，在页面上下文运行一次；
+  页面导航后需重新注入。函数清单：`_pickEl / _readOptionsEl / _openEl`
+  （元素作用域，推荐）、`_pick / _readOptions / _open / _sel`（全局索引版，
+  条目增删后会偏移，慎用）、`_searchPick`（可搜索下拉）、`_setVal / _fill`
+  （应急设值，需真实键盘复核）、`_setDateEl / _clearDateEl`、`_radio`、
+  `_cells`（按文本定位条目容器）
 - 其他技术栈的平台：验证后可在 `scripts/` 下新增对应辅助脚本

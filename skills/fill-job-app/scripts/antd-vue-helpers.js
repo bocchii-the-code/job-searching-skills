@@ -1,6 +1,6 @@
-// 北森（Ant Design Vue v1）网申表单辅助函数
-// 用法：把本文件全文作为 chrome-devtools MCP evaluate_script 的 function 参数传入，
-//       注入后调用 window._pickEl / window._radio 等。页面导航后需重新注入。
+// 北森（Ant Design Vue v1）网申表单辅助函数（自包含，无外部依赖）
+// 用法：把本文件全文作为浏览器工具「在页面中执行 JS」入口的代码传入，
+//       运行一次后即可调用 window._pickEl / window._radio 等。页面导航后需重新注入。
 async () => {
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   window._sleep = sleep;
